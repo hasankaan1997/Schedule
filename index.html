@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Front Desk — Schedule</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --surface2: #f0efe9;
+  --surface3: #e8e7e0;
+  --border: #dddbd2;
+  --border2: #cccac0;
+  --text: #1a1916;
+  --text2: #6b6960;
+  --text3: #9e9c94;
+  --accent: #2d5be3;
+  --accent-bg: #eef2fd;
+  --accent-text: #1a3aad;
+  --danger: #c23b22;
+  --danger-bg: #fdf0ed;
+  --success: #1a7a4a;
+  --warn: #8a5c00;
+  --warn-bg: #fdf5e0;
+  --shift-am-bg: #e8f0fd; --shift-am: #1a3aad;
+  --shift-mid-bg: #e6f4ec; --shift-mid: #1a5c35;
+  --shift-pm-bg: #fdf5e0; --shift-pm: #7a4800;
+  --shift-night-bg: #eeecfd; --shift-night: #3d2a9e;
+  --shift-vac-bg: #fdeee9; --shift-vac: #8a2a14;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.layout {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.header-left { display: flex; flex-direction: column; gap: 2px; }
+.header-title {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--text);
+}
+.header-sub {
+  font-size: 12px;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.02em;
+}
+
+.week-nav {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.week-nav button {
+  background: none;
+  border: none;
+  padding: 8px 14px;
+  cursor: pointer;
+  color: var(--text2);
+  font-size: 16px;
+  transition: background 0.15s;
+  line-height: 1;
+}
+.week-nav button:hover { background: var(--surface2); color: var(--text); }
+.week-label {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  white-space: nowrap;
+  min-width: 180px;
+  text-align: center;
+}
+
+.header-actions { display: flex; gap: 8px; }
+.btn {
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+  box-shadow: var(--shadow);
+}
+.btn:hover { background: var(--surface2); border-color: var(--border2); }
+.btn-accent {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn-accent:hover { background: #2450c8; border-color: #2450c8; }
+
+/* Stats panel */
+.stats-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+.stats-panel table { width: 100%; border-collapse: collapse; min-width: 620px; }
+.stats-panel th {
+  padding: 10px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text3);
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.stats-panel th.rl { text-align: left; width: 110px; }
+.stats-panel td {
+  padding: 8px 12px;
+  font-size: 13px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.stats-panel td.rl {
+  font-size: 12px;
+  color: var(--text2);
+  text-align: left;
+  font-weight: 500;
+  background: var(--surface2);
+}
+.stats-panel tr:last-child td { border-bottom: none; }
+.stats-panel .total-col {
+  text-align: right;
+  font-size: 12px;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+  background: var(--surface2);
+  border-left: 1px solid var(--border);
+}
+.editable {
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 5px;
+  display: inline-block;
+  font-weight: 500;
+  transition: background 0.12s;
+}
+.editable:hover { background: var(--accent-bg); color: var(--accent-text); }
+.bar-cell { vertical-align: bottom; padding-bottom: 6px !important; }
+.bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.bar-inner { width: 24px; border-radius: 3px 3px 0 0; }
+.occ-val { font-weight: 600; font-family: 'DM Mono', monospace; }
+
+/* Schedule table */
+.schedule-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+.schedule-scroll { overflow-x: auto; }
+.schedule-table { width: 100%; border-collapse: collapse; min-width: 800px; }
+.schedule-table thead th {
+  padding: 10px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text3);
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.schedule-table thead th.name-col { text-align: left; width: 160px; padding-left: 16px; }
+.schedule-table thead th.hrs-col { text-align: right; width: 72px; padding-right: 16px; }
+.day-th { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.day-th .dow { font-size: 10px; color: var(--text3); }
+.day-th .dt { font-size: 12px; font-weight: 500; color: var(--text); }
+
+.section-row td {
+  background: var(--surface2);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text3);
+  padding: 5px 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.schedule-table tbody tr:not(.section-row):hover td { background: #fafaf7; }
+.schedule-table tbody td {
+  padding: 5px 6px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.schedule-table tbody tr:last-child td { border-bottom: none; }
+
+.emp-cell { display: flex; align-items: center; gap: 6px; padding-left: 10px; }
+.emp-name { font-size: 13px; font-weight: 400; color: var(--text); }
+.del-btn {
+  opacity: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text3);
+  font-size: 13px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: all 0.12s;
+  font-family: inherit;
+}
+tr:hover .del-btn { opacity: 1; }
+.del-btn:hover { background: var(--danger-bg); color: var(--danger); }
+
+.shift-cell { text-align: center; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 7px;
+  border-radius: 5px;
+  cursor: pointer;
+  min-width: 68px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.01em;
+  transition: opacity 0.12s, transform 0.1s;
+}
+.pill:hover { opacity: 0.78; transform: scale(0.97); }
+.p-off { background: var(--surface2); color: var(--text3); border: 1px solid var(--border); }
+.p-am  { background: var(--shift-am-bg); color: var(--shift-am); }
+.p-mid { background: var(--shift-mid-bg); color: var(--shift-mid); }
+.p-pm  { background: var(--shift-pm-bg); color: var(--shift-pm); }
+.p-night { background: var(--shift-night-bg); color: var(--shift-night); }
+.p-vac { background: var(--shift-vac-bg); color: var(--shift-vac); }
+
+.hrs-cell {
+  text-align: right;
+  padding-right: 16px !important;
+  font-size: 12px;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+}
+
+/* Empty week state */
+.empty-week {
+  padding: 3rem 2rem;
+  text-align: center;
+}
+.empty-week .ew-icon { font-size: 32px; margin-bottom: 1rem; opacity: 0.3; }
+.empty-week .ew-title { font-size: 15px; font-weight: 500; color: var(--text2); margin-bottom: 6px; }
+.empty-week .ew-sub { font-size: 13px; color: var(--text3); margin-bottom: 1.5rem; }
+
+/* Footer note */
+.note-bar {
+  font-size: 11px;
+  color: var(--text3);
+  line-height: 1.7;
+  padding: 0 2px;
+}
+.note-bar span { margin-right: 12px; }
+
+/* Modal */
+.overlay {
+  display: none;
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(15,14,12,0.4);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+}
+.overlay.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 1.75rem;
+  width: 360px;
+  max-width: 95vw;
+  box-shadow: var(--shadow-md);
+  animation: slideUp 0.18s ease;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.modal-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+}
+.form-row { margin-bottom: 14px; }
+.form-row label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text3);
+  display: block;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.form-row input, .form-row select {
+  width: 100%;
+  padding: 8px 11px;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  transition: border-color 0.12s;
+}
+.form-row input:focus, .form-row select:focus { border-color: var(--accent); }
+.modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.25rem; }
+.modal-body p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+.shift-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 4px;
+}
+.shift-opt {
+  padding: 7px 6px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.12s;
+  font-family: 'DM Mono', monospace;
+}
+.shift-opt:hover { opacity: 0.8; }
+.shift-opt.selected { border-color: var(--text) !important; box-shadow: 0 0 0 2px rgba(0,0,0,0.08); }
+
+/* Tooltip badge for auto */
+.auto-badge {
+  font-size: 9px;
+  background: var(--surface2);
+  color: var(--text3);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 4px;
+  margin-left: 4px;
+  font-family: 'DM Mono', monospace;
+  vertical-align: middle;
+}
+
+@media print {
+  body { background: white; }
+  .header-actions, .week-nav button, .del-btn, .overlay { display: none !important; }
+  .layout { padding: 1rem; }
+  .schedule-panel, .stats-panel { box-shadow: none; border-color: #ccc; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+  <div class="header">
+    <div class="header-left">
+      <div class="header-title">Front Desk</div>
+      <div class="header-sub" id="header-sub">Weekly Schedule</div>
+    </div>
+    <div class="week-nav">
+      <button onclick="changeWeek(-1)">&#8592;</button>
+      <span class="week-label" id="week-label"></span>
+      <button onclick="changeWeek(1)">&#8594;</button>
+    </div>
+    <div class="header-actions">
+      <button class="btn" onclick="addEmployee()">+ Employee</button>
+      <button class="btn btn-accent" onclick="window.print()">&#128438; Print / PDF</button>
+    </div>
+  </div>
+
+  <div class="stats-panel">
+    <div style="overflow-x:auto"><table id="stats-table"></table></div>
+  </div>
+
+  <div class="schedule-panel">
+    <div class="schedule-scroll">
+      <table class="schedule-table" id="schedule-table"></table>
+    </div>
+  </div>
+
+  <div class="note-bar">
+    <span>&#9679; No changes without management approval</span>
+    <span>&#9679; Time-off requests 2 weeks in advance via UKG Dimensions</span>
+    <span>&#9679; Shifts &gt;6 hrs require a 30-min meal break</span>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Edit</div>
+    <div id="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-accent" id="modal-save">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const TOTAL_ROOMS = 386;
+const SHIFT_PRESETS = [
+  { label: 'OFF', cls: 'p-off' },
+  { label: 'VACATION', cls: 'p-vac' },
+  { label: '7AM-3PM', cls: 'p-am' },
+  { label: '7AM-4PM', cls: 'p-am' },
+  { label: '10AM-6PM', cls: 'p-mid' },
+  { label: '10AM-5PM', cls: 'p-mid' },
+  { label: '3PM-11PM', cls: 'p-pm' },
+  { label: '11PM-7AM', cls: 'p-night' },
+];
+
+function pillClass(s) {
+  if (!s || s === 'OFF') return 'p-off';
+  if (s === 'VACATION') return 'p-vac';
+  const m = s.match(/^(\d+)(AM|PM)/i);
+  if (!m) return 'p-am';
+  let h = parseInt(m[1]);
+  const ampm = m[2].toUpperCase();
+  if (ampm === 'PM' && h !== 12) h += 12;
+  if (ampm === 'AM' && h === 12) h = 0;
+  if (h >= 23 || h < 7) return 'p-night';
+  if (h >= 7 && h < 12) return 'p-am';
+  if (h >= 12 && h < 15) return 'p-mid';
+  return 'p-pm';
+}
+function shiftHours(s) {
+  if (!s || s === 'OFF' || s === 'VACATION') return 0;
+  const m = s.match(/(\d+)(AM|PM)-(\d+)(AM|PM)/i);
+  if (!m) return 0;
+  let [, sh, sa, eh, ea] = m; sh = parseInt(sh); eh = parseInt(eh);
+  if (sa.toUpperCase() === 'PM' && sh !== 12) sh += 12;
+  if (ea.toUpperCase() === 'PM' && eh !== 12) eh += 12;
+  if (sa.toUpperCase() === 'AM' && sh === 12) sh = 0;
+  if (ea.toUpperCase() === 'AM' && eh === 12) eh = 0;
+  let d = eh - sh; if (d <= 0) d += 24; return d;
+}
+
+const BASE_DATE = new Date(2025, 3, 5);
+let currentWeekIdx = 0;
+
+const DEFAULT_WEEK = {
+  arrivals:   [21, 44, 81, 26, 112, 156, 46],
+  departures: [40, 14,  7, 54,  39, 141, 44],
+  stayover:   [27, 34, 71, 98,  85,  56, 46],
+  sections: [
+    { name: 'Front Desk Director', employees: [
+      { name: 'Sezai Eser', shifts: ['OFF','OFF','7AM-4PM','7AM-4PM','7AM-4PM','7AM-4PM','7AM-4PM'] }
+    ]},
+    { name: 'Front Desk Manager', employees: [
+      { name: 'Hasan Aksu', shifts: ['OFF','VACATION','VACATION','VACATION','VACATION','VACATION','OFF'] }
+    ]},
+    { name: 'Front Desk Agent', employees: [
+      { name: 'Joyce',         shifts: ['7AM-3PM','7AM-3PM','3PM-11PM','OFF','3PM-11PM','7AM-3PM','OFF'] },
+      { name: 'Tram (trainee)',shifts: ['OFF','OFF','10AM-6PM','7AM-3PM','7AM-3PM','10AM-5PM','7AM-3PM'] },
+      { name: 'Salih',         shifts: ['3PM-11PM','3PM-11PM','OFF','3PM-11PM','3PM-11PM','3PM-11PM','3PM-11PM'] }
+    ]},
+    { name: 'Night Audit', employees: [
+      { name: 'Amber',           shifts: ['OFF','11PM-7AM','OFF','11PM-7AM','OFF','OFF','OFF'] },
+      { name: 'Dedrick Chapman', shifts: ['11PM-7AM','OFF','11PM-7AM','OFF','11PM-7AM','11PM-7AM','11PM-7AM'] }
+    ]}
+  ]
+};
+
+// Load from localStorage or seed week 0
+let allWeeks = {};
+try {
+  const saved = localStorage.getItem('fd_schedule_weeks');
+  if (saved) allWeeks = JSON.parse(saved);
+} catch(e) {}
+if (!allWeeks[0]) allWeeks[0] = JSON.parse(JSON.stringify(DEFAULT_WEEK));
+
+function saveAll() {
+  try { localStorage.setItem('fd_schedule_weeks', JSON.stringify(allWeeks)); } catch(e) {}
+}
+
+function getWeekData() { return allWeeks[currentWeekIdx] || null; }
+
+function getWeekStart() {
+  let d = new Date(BASE_DATE);
+  d.setDate(d.getDate() + currentWeekIdx * 7);
+  return d;
+}
+function formatDateRange() {
+  let s = getWeekStart(), e = new Date(s);
+  e.setDate(s.getDate() + 6);
+  return `${s.getDate()} ${MONTHS[s.getMonth()]} – ${e.getDate()} ${MONTHS[e.getMonth()]} ${e.getFullYear()}`;
+}
+function getDayLabels() {
+  let s = getWeekStart();
+  return DAYS.map((d, i) => {
+    let dt = new Date(s); dt.setDate(s.getDate() + i);
+    return { dow: d, date: `${dt.getDate()} ${MONTHS[dt.getMonth()]}` };
+  });
+}
+
+function renderStats() {
+  const wd = getWeekData();
+  const days = getDayLabels();
+  document.getElementById('week-label').textContent = formatDateRange();
+  document.getElementById('header-sub').textContent =
+    `Week ${currentWeekIdx === 0 ? '(current)' : currentWeekIdx > 0 ? '+' + currentWeekIdx : currentWeekIdx}`;
+
+  if (!wd) {
+    document.getElementById('stats-table').innerHTML = '';
+    return;
+  }
+
+  const maxArr = Math.max(...wd.arrivals, 1);
+  const maxDep = Math.max(...wd.departures, 1);
+
+  let html = '<thead><tr><th class="rl"></th>';
+  days.forEach(d => {
+    html += `<th><div class="day-th"><span class="dow">${d.dow}</span><span class="dt">${d.date}</span></div></th>`;
+  });
+  html += '<th style="text-align:right;width:80px;font-size:10px;padding-right:12px">Total/Avg</th></tr></thead><tbody>';
+
+  // Occupancy row
+  html += '<tr><td class="rl">Occupancy <span class="auto-badge">AUTO</span></td>';
+  let occSum = 0;
+  for (let i = 0; i < 7; i++) {
+    const pct = Math.min(100, Math.round(((wd.arrivals[i] + wd.stayover[i]) / TOTAL_ROOMS) * 100));
+    occSum += pct;
+    const col = pct < 30 ? '#6b9fe4' : pct < 60 ? '#2d5be3' : '#1a3aad';
+    html += `<td><span class="occ-val" style="color:${col}">${pct}%</span></td>`;
+  }
+  html += `<td class="total-col">${Math.round(occSum / 7)}%</td></tr>`;
+
+  // Arrivals
+  html += '<tr><td class="rl">Arrivals</td>';
+  wd.arrivals.forEach((v, i) => {
+    const h = Math.max(4, Math.round((v / maxArr) * 26));
+    html += `<td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:${h}px;background:#2d5be3"></div>
+      <span class="editable" onclick="editStat('arrivals', ${i})">${v}</span>
+    </div></td>`;
+  });
+  html += `<td class="total-col">${wd.arrivals.reduce((a, b) => a + b, 0)}</td></tr>`;
+
+  // Departures
+  html += '<tr><td class="rl">Departures</td>';
+  wd.departures.forEach((v, i) => {
+    const h = Math.max(4, Math.round((v / maxDep) * 26));
+    html += `<td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:${h}px;background:#d4820a"></div>
+      <span class="editable" onclick="editStat('departures', ${i})">${v}</span>
+    </div></td>`;
+  });
+  html += `<td class="total-col">${wd.departures.reduce((a, b) => a + b, 0)}</td></tr>`;
+
+  // Stay over
+  html += '<tr><td class="rl">Stay over <span class="auto-badge">→ OCC</span></td>';
+  wd.stayover.forEach((v, i) => {
+    html += `<td><span class="editable" onclick="editStat('stayover', ${i})">${v}</span></td>`;
+  });
+  html += `<td class="total-col">${wd.stayover.reduce((a, b) => a + b, 0)}</td></tr>`;
+
+  html += '</tbody>';
+  document.getElementById('stats-table').innerHTML = html;
+}
+
+function renderSchedule() {
+  const wd = getWeekData();
+  const days = getDayLabels();
+
+  if (!wd) {
+    document.getElementById('schedule-table').innerHTML = `
+      <tbody><tr><td colspan="9">
+        <div class="empty-week">
+          <div class="ew-icon">📅</div>
+          <div class="ew-title">No schedule for this week yet</div>
+          <div class="ew-sub">This week hasn't been set up. Create it from scratch or copy from the previous week.</div>
+          <div style="display:flex;gap:8px;justify-content:center">
+            <button class="btn" onclick="initWeekEmpty()">Start blank</button>
+            <button class="btn btn-accent" onclick="copyFromPrev()">Copy from previous week</button>
+          </div>
+        </div>
+      </td></tr></tbody>`;
+    return;
+  }
+
+  let html = '<thead><tr><th class="name-col">Employee</th>';
+  days.forEach(d => {
+    html += `<th><div class="day-th"><span class="dow">${d.dow}</span><span class="dt">${d.date}</span></div></th>`;
+  });
+  html += '<th class="hrs-col">Hours</th></tr></thead><tbody>';
+
+  wd.sections.forEach((sec, si) => {
+    html += `<tr class="section-row"><td colspan="9">${sec.name}</td></tr>`;
+    sec.employees.forEach((emp, ei) => {
+      const hrs = emp.shifts.reduce((a, s) => a + shiftHours(s), 0);
+      html += `<tr>
+        <td><div class="emp-cell">
+          <span class="emp-name">${emp.name}</span>
+          <button class="del-btn" onclick="deleteEmployee(${si}, ${ei})">✕</button>
+        </div></td>`;
+      emp.shifts.forEach((sh, di) => {
+        html += `<td class="shift-cell"><span class="pill ${pillClass(sh)}" onclick="editShift(${si}, ${ei}, ${di})">${sh || 'OFF'}</span></td>`;
+      });
+      html += `<td class="hrs-cell">${hrs > 0 ? hrs + 'h' : '—'}</td></tr>`;
+    });
+  });
+
+  html += '</tbody>';
+  document.getElementById('schedule-table').innerHTML = html;
+}
+
+function render() { renderStats(); renderSchedule(); }
+function changeWeek(d) { currentWeekIdx += d; if (currentWeekIdx < 0) currentWeekIdx = 0; render(); }
+
+function initWeekEmpty() {
+  allWeeks[currentWeekIdx] = {
+    arrivals:   [0,0,0,0,0,0,0],
+    departures: [0,0,0,0,0,0,0],
+    stayover:   [0,0,0,0,0,0,0],
+    sections: JSON.parse(JSON.stringify(DEFAULT_WEEK.sections)).map(s => ({
+      ...s, employees: s.employees.map(e => ({ ...e, shifts: Array(7).fill('OFF') }))
+    }))
+  };
+  saveAll(); render();
+}
+
+function copyFromPrev() {
+  const prev = allWeeks[currentWeekIdx - 1];
+  if (!prev) { alert('No previous week data found.'); return; }
+  allWeeks[currentWeekIdx] = JSON.parse(JSON.stringify(prev));
+  allWeeks[currentWeekIdx].arrivals   = [0,0,0,0,0,0,0];
+  allWeeks[currentWeekIdx].departures = [0,0,0,0,0,0,0];
+  allWeeks[currentWeekIdx].stayover   = [0,0,0,0,0,0,0];
+  saveAll(); render();
+}
+
+// --- Edit stat ---
+function editStat(field, dayIdx) {
+  const wd = getWeekData();
+  const days = getDayLabels();
+  const labels = { arrivals: 'Arrivals', departures: 'Departures', stayover: 'Stay over' };
+  document.getElementById('modal-title').textContent = `${labels[field]} — ${days[dayIdx].dow} ${days[dayIdx].date}`;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-row">
+      <label>Number of guests</label>
+      <input type="number" id="stat-inp" min="0" value="${wd[field][dayIdx]}">
+    </div>`;
+  document.getElementById('modal-save').onclick = () => {
+    wd[field][dayIdx] = parseInt(document.getElementById('stat-inp').value) || 0;
+    saveAll(); closeModal(); render();
+  };
+  openModal('stat-inp');
+}
+
+// --- Edit shift ---
+function editShift(si, ei, di) {
+  const wd = getWeekData();
+  const emp = wd.sections[si].employees[ei];
+  const cur = emp.shifts[di];
+  const days = getDayLabels();
+  document.getElementById('modal-title').textContent = `${emp.name} — ${days[di].dow} ${days[di].date}`;
+
+  const isCustom = cur && !SHIFT_PRESETS.map(p => p.label).includes(cur);
+  let gridHTML = SHIFT_PRESETS.map(p =>
+    `<div class="shift-opt ${p.cls}${cur === p.label ? ' selected' : ''}" onclick="selectShiftOpt(this,'${p.label}')">${p.label}</div>`
+  ).join('');
+  gridHTML += `<div class="shift-opt p-mid${isCustom ? ' selected' : ''}" id="custom-opt" onclick="selectShiftOpt(this,'__custom__')">Custom…</div>`;
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-row"><label>Select shift</label><div class="shift-grid">${gridHTML}</div></div>
+    <div class="form-row" id="custom-row" style="display:${isCustom ? 'block' : 'none'}">
+      <label>Custom shift (e.g. 8AM-4PM)</label>
+      <input id="custom-inp" value="${isCustom ? cur : ''}" placeholder="8AM-4PM">
+    </div>`;
+
+  document.getElementById('modal-save').onclick = () => {
+    const selected = document.querySelector('.shift-opt.selected');
+    let val = selected ? selected.textContent : cur;
+    if (val === 'Custom…') {
+      val = (document.getElementById('custom-inp').value.trim().toUpperCase()) || 'OFF';
+    }
+    emp.shifts[di] = val;
+    saveAll(); closeModal(); render();
+  };
+  openModal();
+}
+
+window.selectShiftOpt = function(el, val) {
+  document.querySelectorAll('.shift-opt').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  const cr = document.getElementById('custom-row');
+  if (cr) cr.style.display = val === '__custom__' ? 'block' : 'none';
+};
+
+// --- Delete employee ---
+function deleteEmployee(si, ei) {
+  const wd = getWeekData();
+  const name = wd.sections[si].employees[ei].name;
+  document.getElementById('modal-title').textContent = 'Remove employee';
+  document.getElementById('modal-body').innerHTML = `
+    <p><strong>${name}</strong> will be removed from this week's schedule. Continue?</p>`;
+  const saveBtn = document.getElementById('modal-save');
+  saveBtn.textContent = 'Remove';
+  saveBtn.style.background = 'var(--danger)';
+  saveBtn.style.borderColor = 'var(--danger)';
+  saveBtn.onclick = () => {
+    wd.sections[si].employees.splice(ei, 1);
+    saveAll(); closeModal(); render();
+  };
+  openModal();
+}
+
+// --- Add employee ---
+function addEmployee() {
+  const wd = getWeekData();
+  if (!wd) { alert('Set up this week first.'); return; }
+  const secs = wd.sections.map((s, i) => `<option value="${i}">${s.name}</option>`).join('');
+  document.getElementById('modal-title').textContent = 'Add employee';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-row"><label>Full name</label><input id="new-name" placeholder="e.g. John Smith"></div>
+    <div class="form-row"><label>Department</label><select id="new-sec">${secs}</select></div>
+    <div class="form-row"><label>Default shift (all days)</label>
+      <select id="new-shift">${SHIFT_PRESETS.map(p => `<option>${p.label}</option>`).join('')}</select>
+    </div>`;
+  document.getElementById('modal-save').onclick = () => {
+    const name = document.getElementById('new-name').value.trim();
+    if (!name) return;
+    const sec = parseInt(document.getElementById('new-sec').value);
+    const sh = document.getElementById('new-shift').value;
+    wd.sections[sec].employees.push({ name, shifts: Array(7).fill(sh) });
+    saveAll(); closeModal(); render();
+  };
+  openModal('new-name');
+}
+
+function openModal(focusId) {
+  document.getElementById('overlay').classList.add('open');
+  const sb = document.getElementById('modal-save');
+  sb.textContent = 'Save';
+  sb.style.background = '';
+  sb.style.borderColor = '';
+  if (focusId) setTimeout(() => {
+    const el = document.getElementById(focusId);
+    if (el) { el.focus(); el.select && el.select(); }
+  }, 80);
+}
+function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+document.getElementById('overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+render();
+
+</script>
+</body>
+</html>
