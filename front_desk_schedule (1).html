@@ -1,0 +1,892 @@
+<html lang="en" class="trancy-und"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Front Desk — Schedule</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --surface2: #f0efe9;
+  --surface3: #e8e7e0;
+  --border: #dddbd2;
+  --border2: #cccac0;
+  --text: #1a1916;
+  --text2: #6b6960;
+  --text3: #9e9c94;
+  --accent: #2d5be3;
+  --accent-bg: #eef2fd;
+  --accent-text: #1a3aad;
+  --danger: #c23b22;
+  --danger-bg: #fdf0ed;
+  --success: #1a7a4a;
+  --warn: #8a5c00;
+  --warn-bg: #fdf5e0;
+  --shift-am-bg: #e8f0fd; --shift-am: #1a3aad;
+  --shift-mid-bg: #e6f4ec; --shift-mid: #1a5c35;
+  --shift-pm-bg: #fdf5e0; --shift-pm: #7a4800;
+  --shift-night-bg: #eeecfd; --shift-night: #3d2a9e;
+  --shift-vac-bg: #fdeee9; --shift-vac: #8a2a14;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.layout {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.header-left { display: flex; flex-direction: column; gap: 2px; }
+.header-title {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--text);
+}
+.header-sub {
+  font-size: 12px;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.02em;
+}
+
+.week-nav {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.week-nav button {
+  background: none;
+  border: none;
+  padding: 8px 14px;
+  cursor: pointer;
+  color: var(--text2);
+  font-size: 16px;
+  transition: background 0.15s;
+  line-height: 1;
+}
+.week-nav button:hover { background: var(--surface2); color: var(--text); }
+.week-label {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  white-space: nowrap;
+  min-width: 180px;
+  text-align: center;
+}
+
+.header-actions { display: flex; gap: 8px; }
+.btn {
+  border: 1px solid var(--border2);
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.15s;
+  box-shadow: var(--shadow);
+}
+.btn:hover { background: var(--surface2); border-color: var(--border2); }
+.btn-accent {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn-accent:hover { background: #2450c8; border-color: #2450c8; }
+
+/* Stats panel */
+.stats-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+.stats-panel table { width: 100%; border-collapse: collapse; min-width: 620px; }
+.stats-panel th {
+  padding: 10px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text3);
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.stats-panel th.rl { text-align: left; width: 110px; }
+.stats-panel td {
+  padding: 8px 12px;
+  font-size: 13px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.stats-panel td.rl {
+  font-size: 12px;
+  color: var(--text2);
+  text-align: left;
+  font-weight: 500;
+  background: var(--surface2);
+}
+.stats-panel tr:last-child td { border-bottom: none; }
+.stats-panel .total-col {
+  text-align: right;
+  font-size: 12px;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+  background: var(--surface2);
+  border-left: 1px solid var(--border);
+}
+.editable {
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 5px;
+  display: inline-block;
+  font-weight: 500;
+  transition: background 0.12s;
+}
+.editable:hover { background: var(--accent-bg); color: var(--accent-text); }
+.bar-cell { vertical-align: bottom; padding-bottom: 6px !important; }
+.bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.bar-inner { width: 24px; border-radius: 3px 3px 0 0; }
+.occ-val { font-weight: 600; font-family: 'DM Mono', monospace; }
+
+/* Schedule table */
+.schedule-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+.schedule-scroll { overflow-x: auto; }
+.schedule-table { width: 100%; border-collapse: collapse; min-width: 800px; }
+.schedule-table thead th {
+  padding: 10px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text3);
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.schedule-table thead th.name-col { text-align: left; width: 160px; padding-left: 16px; }
+.schedule-table thead th.hrs-col { text-align: right; width: 72px; padding-right: 16px; }
+.day-th { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.day-th .dow { font-size: 10px; color: var(--text3); }
+.day-th .dt { font-size: 12px; font-weight: 500; color: var(--text); }
+
+.section-row td {
+  background: var(--surface2);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text3);
+  padding: 5px 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.schedule-table tbody tr:not(.section-row):hover td { background: #fafaf7; }
+.schedule-table tbody td {
+  padding: 5px 6px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.schedule-table tbody tr:last-child td { border-bottom: none; }
+
+.emp-cell { display: flex; align-items: center; gap: 6px; padding-left: 10px; }
+.emp-name { font-size: 13px; font-weight: 400; color: var(--text); }
+.del-btn {
+  opacity: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text3);
+  font-size: 13px;
+  padding: 1px 4px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: all 0.12s;
+  font-family: inherit;
+}
+tr:hover .del-btn { opacity: 1; }
+.del-btn:hover { background: var(--danger-bg); color: var(--danger); }
+
+.shift-cell { text-align: center; }
+.pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 7px;
+  border-radius: 5px;
+  cursor: pointer;
+  min-width: 68px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.01em;
+  transition: opacity 0.12s, transform 0.1s;
+}
+.pill:hover { opacity: 0.78; transform: scale(0.97); }
+.p-off { background: var(--surface2); color: var(--text3); border: 1px solid var(--border); }
+.p-am  { background: var(--shift-am-bg); color: var(--shift-am); }
+.p-mid { background: var(--shift-mid-bg); color: var(--shift-mid); }
+.p-pm  { background: var(--shift-pm-bg); color: var(--shift-pm); }
+.p-night { background: var(--shift-night-bg); color: var(--shift-night); }
+.p-vac { background: var(--shift-vac-bg); color: var(--shift-vac); }
+
+.hrs-cell {
+  text-align: right;
+  padding-right: 16px !important;
+  font-size: 12px;
+  color: var(--text3);
+  font-family: 'DM Mono', monospace;
+}
+
+/* Empty week state */
+.empty-week {
+  padding: 3rem 2rem;
+  text-align: center;
+}
+.empty-week .ew-icon { font-size: 32px; margin-bottom: 1rem; opacity: 0.3; }
+.empty-week .ew-title { font-size: 15px; font-weight: 500; color: var(--text2); margin-bottom: 6px; }
+.empty-week .ew-sub { font-size: 13px; color: var(--text3); margin-bottom: 1.5rem; }
+
+/* Footer note */
+.note-bar {
+  font-size: 11px;
+  color: var(--text3);
+  line-height: 1.7;
+  padding: 0 2px;
+}
+.note-bar span { margin-right: 12px; }
+
+/* Modal */
+.overlay {
+  display: none;
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(15,14,12,0.4);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+}
+.overlay.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 1.75rem;
+  width: 360px;
+  max-width: 95vw;
+  box-shadow: var(--shadow-md);
+  animation: slideUp 0.18s ease;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.modal-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 1.25rem;
+}
+.form-row { margin-bottom: 14px; }
+.form-row label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text3);
+  display: block;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.form-row input, .form-row select {
+  width: 100%;
+  padding: 8px 11px;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  transition: border-color 0.12s;
+}
+.form-row input:focus, .form-row select:focus { border-color: var(--accent); }
+.modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.25rem; }
+.modal-body p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+.shift-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 4px;
+}
+.shift-opt {
+  padding: 7px 6px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.12s;
+  font-family: 'DM Mono', monospace;
+}
+.shift-opt:hover { opacity: 0.8; }
+.shift-opt.selected { border-color: var(--text) !important; box-shadow: 0 0 0 2px rgba(0,0,0,0.08); }
+
+/* Tooltip badge for auto */
+.auto-badge {
+  font-size: 9px;
+  background: var(--surface2);
+  color: var(--text3);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 4px;
+  margin-left: 4px;
+  font-family: 'DM Mono', monospace;
+  vertical-align: middle;
+}
+
+@media print {
+  body { background: white; }
+  .header-actions, .week-nav button, .del-btn, .overlay { display: none !important; }
+  .layout { padding: 1rem; }
+  .schedule-panel, .stats-panel { box-shadow: none; border-color: #ccc; }
+}
+</style>
+</head>
+<body>
+<textarea id="embedded-data" style="display:none">{"0":{"arrivals":[21,44,81,26,112,156,46],"departures":[40,14,7,54,39,141,44],"stayover":[27,34,71,98,85,56,46],"sections":[{"name":"Front Desk Director","employees":[{"name":"Sezai Eser","shifts":["OFF","OFF","7AM-4PM","7AM-4PM","7AM-4PM","7AM-4PM","7AM-4PM"]}]},{"name":"Front Desk Manager","employees":[{"name":"Hasan Aksu","shifts":["OFF","VACATION","VACATION","VACATION","VACATION","VACATION","OFF"]},{"name":"Tosha","shifts":["OFF","OFF","OFF","OFF","OFF","OFF","OFF"]}]},{"name":"Front Desk Agent","employees":[{"name":"Joyce","shifts":["7AM-3PM","7AM-3PM","3PM-11PM","OFF","3PM-11PM","7AM-3PM","OFF"]},{"name":"Tram (trainee)","shifts":["OFF","OFF","10AM-6PM","7AM-3PM","7AM-3PM","10AM-5PM","7AM-3PM"]},{"name":"Salih","shifts":["3PM-11PM","3PM-11PM","OFF","3PM-11PM","3PM-11PM","3PM-11PM","3PM-11PM"]},{"name":"Nix","shifts":["OFF","OFF","OFF","OFF","OFF","OFF","OFF"]}]},{"name":"Night Audit","employees":[{"name":"Amber","shifts":["OFF","11PM-7AM","OFF","11PM-7AM","OFF","OFF","OFF"]},{"name":"Dedrick Chapman","shifts":["11PM-7AM","OFF","11PM-7AM","OFF","11PM-7AM","11PM-7AM","11PM-7AM"]}]}]},"2":{"arrivals":[21,63,53,179,165,100,24],"departures":[307,17,25,29,93,53,49],"stayover":[27,31,80,109,201,296,347],"sections":[{"name":"Front Desk Director","employees":[]},{"name":"Front Desk Manager","employees":[{"name":"Hasan Aksu","shifts":["OFF","OFF","7AM-4PM","7AM-4PM","7AM-4PM","1PM-11PM","7AM-4PM"]},{"name":"Tosha","shifts":["7AM-3PM","7AM-3PM","OFF","3PM-11PM","3PM-11PM","7AM-1PM","OFF"]}]},{"name":"Front Desk Agent","employees":[{"name":"Joyce","shifts":["7AM-3PM","OFF","3PM-11PM","3PM-11PM","3PM-11PM","3PM-11PM","OFF"]},{"name":"Salih","shifts":["3PM-11PM","3PM-11PM","OFF","OFF","3PM-11PM","3PM-11PM","3PM-11PM"]},{"name":"Tram","shifts":["OFF","OFF","7AM-3PM","7AM-3PM","7AM-3PM","7AM-3PM","OFF"]},{"name":"Nix","shifts":["7AM-3PM","10AM-6PM","3PM-11PM","3PM-11PM","OFF","OFF","OFF"]}]},{"name":"Night Audit","employees":[{"name":"Amber","shifts":["OFF","OFF","OFF","11PM-7AM","11PM-7AM","11PM-7AM","OFF"]},{"name":"Dedrick Chapman","shifts":["11PM-7AM","11PM-7AM","11PM-7AM","OFF","OFF","OFF","11PM-7AM"]}]}]},"3":{"arrivals":[38,60,68,42,38,138,26],"departures":[340,21,16,70,42,40,22],"stayover":[30,47,91,89,89,87,203],"sections":[{"name":"Front Desk Director","employees":[]},{"name":"Front Desk Manager","employees":[{"name":"Hasan Aksu","shifts":["OFF","OFF","7AM-4PM","7AM-4PM","7AM-4PM","7AM-4PM","7AM-4PM"]},{"name":"Tosha","shifts":["OFF","OFF","OFF","OFF","OFF","OFF","OFF"]}]},{"name":"Front Desk Agent","employees":[{"name":"Joyce","shifts":["3PM-11PM","3PM-11PM","3PM-11PM","3PM-11PM","OFF","OFF","OFF"]},{"name":"Salih","shifts":["7AM-3PM","7AM-3PM","OFF","OFF","3PM-11PM","3PM-11PM","3PM-11PM"]},{"name":"Tram","shifts":["7AM-3PM","12PM-8PM","OFF","OFF","OFF","3PM-11PM","3PM-11PM"]},{"name":"Nix","shifts":["10AM-6PM","OFF","12PM-8PM","12PM-8PM","12PM-8PM","OFF","OFF"]}]},{"name":"Night Audit","employees":[{"name":"Amber","shifts":["OFF","OFF","OFF","OFF","11PM-7AM","11PM-7AM","OFF"]},{"name":"Dedrick Chapman","shifts":["11PM-7AM","11PM-7AM","11PM-7AM","11PM-7AM","OFF","OFF","11PM-7AM"]}]}]},"4":{"arrivals":[50,47,79,47,36,180,85],"departures":[302,23,29,40,81,71,102],"stayover":[43,68,86,125,91,56,121],"sections":[{"name":"Front Desk Director","employees":[]},{"name":"Front Desk Manager","employees":[{"name":"Hasan Aksu","shifts":["7AM-12PM","OFF","7AM-4PM","7AM-4PM","7AM-4PM","7AM-4PM","7AM-4PM"]},{"name":"Tosha","shifts":["OFF","OFF","OFF","3PM-11PM","3PM-11PM","3PM-11PM","3PM-11PM"]}]},{"name":"Front Desk Agent","employees":[{"name":"Joyce","shifts":["OFF","7AM-3PM","OFF","3PM-11PM","3PM-11PM","7AM-3PM","7AM-3PM"]},{"name":"Salih","shifts":["3PM-11PM","3PM-11PM","3PM-11PM","OFF","OFF","3PM-11PM","3PM-11PM"]},{"name":"Tram","shifts":["10AM-6PM","12PM-8PM","12PM-8PM","7AM-3PM","OFF","OFF","OFF"]},{"name":"Nix","shifts":["7AM-3PM","OFF","OFF","OFF","7AM-3PM","3PM-11PM","3PM-11PM"]}]},{"name":"Night Audit","employees":[{"name":"Amber","shifts":["OFF","OFF","OFF","11PM-7AM","11PM-7AM","11PM-7AM","OFF"]},{"name":"Dedrick Chapman","shifts":["11PM-7AM","11PM-7AM","11PM-7AM","OFF","OFF","5PM-11PM","11PM-7AM"]}]}]},"5":{"arrivals":[45,84,57,66,50,103,63],"departures":[219,36,19,68,69,82,40],"stayover":[64,73,138,127,124,92,155],"sections":[{"name":"Front Desk Director","employees":[]},{"name":"Front Desk Manager","employees":[{"name":"Hasan Aksu","shifts":["7AM-12PM","7AM-4PM","OFF","7AM-4PM","7AM-4PM","7AM-4PM","7AM-4PM"]},{"name":"Tosha","shifts":["OFF","OFF","10AM-6PM","12PM-8PM","12PM-8PM","3PM-11PM","3PM-11PM"]}]},{"name":"Front Desk Agent","employees":[{"name":"Joyce","shifts":["3PM-11PM","3PM-11PM","3PM-11PM","OFF","OFF","3PM-11PM","3PM-11PM"]},{"name":"Salih","shifts":["11PM-7AM","OFF","OFF","3PM-11PM","3PM-11PM","7AM-3PM","7AM-3PM"]},{"name":"Tram","shifts":["7AM-3PM","7AM-3PM","7AM-3PM","OFF","OFF","OFF","3PM-11PM"]},{"name":"Nix","shifts":["11PM-7AM","OFF","OFF","3PM-11PM","3PM-11PM","3PM-11PM","REQUEST"]}]},{"name":"Night Audit","employees":[{"name":"Amber","shifts":["OFF","OFF","OFF","OFF","11PM-7AM","11PM-7AM","OFF"]},{"name":"Dedrick Chapman","shifts":["REQUEST","11PM-7AM","11PM-7AM","11PM-7AM","OFF","OFF","11PM-7AM"]}]}]},"6":{"arrivals":[85,124,39,20,27,96,63],"departures":[244,45,74,40,80,94,37],"stayover":[79,120,170,168,108,41,100],"sections":[{"name":"Front Desk Director","employees":[]},{"name":"Front Desk Manager","employees":[{"name":"Hasan Aksu","shifts":["OFF","7AM-4PM","7AM-4PM","7AM-4PM","7AM-4PM","7AM-4PM","7AM-4PM"]},{"name":"Tosha","shifts":["OFF","OFF","OFF","OFF","OFF","OFF","OFF"]}]},{"name":"Front Desk Agent","employees":[{"name":"Joyce","shifts":["3PM-11PM","3PM-11PM","3PM-11PM","OFF","OFF","7AM-3PM","7AM-3PM"]},{"name":"Salih","shifts":["7AM-3PM","OFF","OFF","3PM-11PM","3PM-11PM","3PM-11PM","3PM-11PM"]},{"name":"Tram","shifts":["7AM-3PM","7AM-3PM","7AM-3PM","7AM-3PM","7AM-3PM","OFF","OFF"]},{"name":"Nix","shifts":["3PM-11PM","3PM-11PM","OFF","OFF","3PM-11PM","3PM-11PM","3PM-11PM"]}]},{"name":"Night Audit","employees":[{"name":"Amber","shifts":["OFF","OFF","OFF","OFF","11PM-7AM","11PM-7AM","OFF"]},{"name":"Dedrick Chapman","shifts":["11PM-7AM","11PM-7AM","11PM-7AM","11PM-7AM","OFF","REQUEST","11PM-7AM"]}]}]},"7":{"arrivals":[13,27,32,20,29,90,33],"departures":[166,44,7,23,16,40,17],"stayover":[64,33,53,62,66,55,128],"sections":[{"name":"Front Desk Director","employees":[]},{"name":"Front Desk Manager","employees":[{"name":"Hasan Aksu","shifts":["OFF","7AM-4PM","7AM-4PM","7AM-4PM","7AM-4PM","7AM-4PM","7AM-4PM"]}]},{"name":"Front Desk Agent","employees":[{"name":"Joyce","shifts":["7AM-3PM","OFF","OFF","3PM-11PM","3PM-11PM","3PM-11PM","7AM-3PM"]},{"name":"Salih","shifts":["3PM-11PM","3PM-11PM","3PM-11PM","OFF","OFF","7AM-3PM","3PM-11PM"]},{"name":"Tram","shifts":["7AM-3PM","3PM-11PM","OFF","OFF","3PM-11PM","3PM-11PM","3PM-11PM"]},{"name":"Nix","shifts":["10AM-6PM","7AM-3PM","7AM-3PM","7AM-3PM","7AM-3PM","OFF","OFF"]}]},{"name":"Night Audit","employees":[{"name":"Dedrick Chapman","shifts":["11PM-7AM","11PM-7AM","11PM-7AM","11PM-7AM","11PM-7AM","OFF","OFF"]}]}]},"8":{"arrivals":[42,27,55,23,147,172,36],"departures":[167,20,31,36,54,50,4],"stayover":[47,69,65,84,53,150,318],"sections":[{"name":"Front Desk Director","employees":[{"name":"Ethan","shifts":["OFF","7AM-3PM","7AM-3PM","7AM-3PM","OFF","7AM-3PM","OFF"]}]},{"name":"Front Desk Manager","employees":[{"name":"Hasan Aksu","shifts":["OFF","OFF","7AM-7PM","7AM-4PM","7AM-4PM","7AM-4PM","7AM-4PM"]}]},{"name":"Front Desk Agent","employees":[{"name":"Joyce","shifts":["7AM-3PM","OFF","OFF","OFF","OFF","OFF","OFF"]},{"name":"Salih","shifts":["3PM-11PM","3PM-7AM","11PM-7AM","OFF","3PM-11PM","3PM-11PM","3PM-11PM"]},{"name":"Tram","shifts":["7AM-3PM","7AM-3PM","OFF","3PM-11PM","3PM-11PM","3PM-11PM","3PM-11PM"]},{"name":"Nix","shifts":["OFF","OFF","3PM-11PM","11PM-7AM","11PM-7AM","11PM-7AM","11PM-7AM"]}]},{"name":"Night Audit","employees":[{"name":"Dedrick","shifts":["11PM-7AM","OFF","OFF","OFF","OFF","OFF","OFF"]}]}]},"9":{"arrivals":[105,51,83,40,42,231,37],"departures":[162,196,56,59,98,51,40],"stayover":[206,115,110,134,76,67,258],"sections":[{"name":"Front Desk Director","employees":[{"name":"Ethan","shifts":["7AM-4PM","7AM-4PM","7AM-4PM","OFF","OFF","7AM-4PM","7AM-4PM"]}]},{"name":"Front Desk Manager","employees":[{"name":"Hasan Aksu","shifts":["10AM-6PM","10AM-6PM","OFF","7AM-4PM","7AM-4PM","10AM-6PM","10AM-6PM"]}]},{"name":"Front Desk Agent","employees":[{"name":"Joyce","shifts":["OFF","OFF","OFF","OFF","3PM-11PM","3PM-11PM","3PM-11PM"]},{"name":"Salih","shifts":["OFF","11PM-7AM","11PM-7AM","11PM-7AM","11PM-7AM","11PM-7AM","11PM-7AM"]},{"name":"Tram","shifts":["3PM-11PM","3PM-11PM","3PM-11PM","3PM-11PM","OFF","3PM-11PM","3PM-11PM"]},{"name":"Nix","shifts":["11PM-7AM","OFF","OFF","OFF","OFF","OFF","OFF"]}]},{"name":"Night Audit","employees":[]}]},"10":{"arrivals":[0,0,0,0,0,0,0],"departures":[0,0,0,0,0,0,0],"stayover":[0,0,0,0,0,0,0],"sections":[{"name":"Front Desk Director","employees":[{"name":"Ethan","shifts":["7AM-4PM","7AM-4PM","OFF","7AM -12PM","7AM-4PM","7AM-4PM","7AM-4PM"]}]},{"name":"Front Desk Manager","employees":[{"name":"Hasan Aksu","shifts":["7AM-1PM- 12AM-5AM","OFF","7AM-4PM","11AM-7PM","VACATION","VACATION","VACATION"]}]},{"name":"Front Desk Agent","employees":[{"name":"Joyce","shifts":["11PM-7AM","11PM-7AM","11PM-7AM","11PM-7AM","5PM-11PM","5PM-11PM","5PM-11PM"]},{"name":"Salih","shifts":["OFF","3PM-11PM","3PM-11PM","3PM-11PM","11PM-7AM","11PM-7AM","11PM-7AM"]},{"name":"Tram","shifts":["3PM-11PM","12PM-8PM","12PM-8PM","OFF","3PM-11PM","3PM-11PM","3PM-11PM"]}]},{"name":"Night Audit","employees":[]}]}}</textarea>
+
+<div class="layout">
+  <div class="header">
+    <div class="header-left">
+      <div class="header-title">Front Desk</div>
+      <div class="header-sub" id="header-sub">Week +10</div>
+    </div>
+    <div class="week-nav">
+      <button onclick="changeWeek(-1)">←</button>
+      <span class="week-label" id="week-label">14 Jun – 20 Jun 2025</span>
+      <button onclick="changeWeek(1)">→</button>
+    </div>
+    <div class="header-actions">
+      <button class="btn" onclick="addEmployee()">+ Employee</button>
+      <button class="btn" onclick="saveToFile()" title="Veriyi HTML dosyasına gömer ve indirir">💾 Kaydet</button>
+      <button class="btn btn-accent" onclick="window.print()">🖶 Print / PDF</button>
+    </div>
+  </div>
+
+  <div class="stats-panel">
+    <div style="overflow-x:auto"><table id="stats-table"><thead><tr><th class="rl"></th><th><div class="day-th"><span class="dow">Sun</span><span class="dt">14 Jun</span></div></th><th><div class="day-th"><span class="dow">Mon</span><span class="dt">15 Jun</span></div></th><th><div class="day-th"><span class="dow">Tue</span><span class="dt">16 Jun</span></div></th><th><div class="day-th"><span class="dow">Wed</span><span class="dt">17 Jun</span></div></th><th><div class="day-th"><span class="dow">Thu</span><span class="dt">18 Jun</span></div></th><th><div class="day-th"><span class="dow">Fri</span><span class="dt">19 Jun</span></div></th><th><div class="day-th"><span class="dow">Sat</span><span class="dt">20 Jun</span></div></th><th style="text-align:right;width:80px;font-size:10px;padding-right:12px">Total/Avg</th></tr></thead><tbody><tr><td class="rl">Occupancy <span class="auto-badge">AUTO</span></td><td><span class="occ-val" style="color:#6b9fe4">0%</span></td><td><span class="occ-val" style="color:#6b9fe4">0%</span></td><td><span class="occ-val" style="color:#6b9fe4">0%</span></td><td><span class="occ-val" style="color:#6b9fe4">0%</span></td><td><span class="occ-val" style="color:#6b9fe4">0%</span></td><td><span class="occ-val" style="color:#6b9fe4">0%</span></td><td><span class="occ-val" style="color:#6b9fe4">0%</span></td><td class="total-col">0%</td></tr><tr><td class="rl">Arrivals</td><td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:4px;background:#2d5be3"></div>
+      <span class="editable" onclick="editStat('arrivals',0)">0</span>
+    </div></td><td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:4px;background:#2d5be3"></div>
+      <span class="editable" onclick="editStat('arrivals',1)">0</span>
+    </div></td><td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:4px;background:#2d5be3"></div>
+      <span class="editable" onclick="editStat('arrivals',2)">0</span>
+    </div></td><td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:4px;background:#2d5be3"></div>
+      <span class="editable" onclick="editStat('arrivals',3)">0</span>
+    </div></td><td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:4px;background:#2d5be3"></div>
+      <span class="editable" onclick="editStat('arrivals',4)">0</span>
+    </div></td><td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:4px;background:#2d5be3"></div>
+      <span class="editable" onclick="editStat('arrivals',5)">0</span>
+    </div></td><td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:4px;background:#2d5be3"></div>
+      <span class="editable" onclick="editStat('arrivals',6)">0</span>
+    </div></td><td class="total-col">0</td></tr><tr><td class="rl">Departures</td><td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:4px;background:#d4820a"></div>
+      <span class="editable" onclick="editStat('departures',0)">0</span>
+    </div></td><td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:4px;background:#d4820a"></div>
+      <span class="editable" onclick="editStat('departures',1)">0</span>
+    </div></td><td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:4px;background:#d4820a"></div>
+      <span class="editable" onclick="editStat('departures',2)">0</span>
+    </div></td><td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:4px;background:#d4820a"></div>
+      <span class="editable" onclick="editStat('departures',3)">0</span>
+    </div></td><td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:4px;background:#d4820a"></div>
+      <span class="editable" onclick="editStat('departures',4)">0</span>
+    </div></td><td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:4px;background:#d4820a"></div>
+      <span class="editable" onclick="editStat('departures',5)">0</span>
+    </div></td><td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:4px;background:#d4820a"></div>
+      <span class="editable" onclick="editStat('departures',6)">0</span>
+    </div></td><td class="total-col">0</td></tr><tr><td class="rl">Stay over <span class="auto-badge">→ OCC</span></td><td><span class="editable" onclick="editStat('stayover',0)">0</span></td><td><span class="editable" onclick="editStat('stayover',1)">0</span></td><td><span class="editable" onclick="editStat('stayover',2)">0</span></td><td><span class="editable" onclick="editStat('stayover',3)">0</span></td><td><span class="editable" onclick="editStat('stayover',4)">0</span></td><td><span class="editable" onclick="editStat('stayover',5)">0</span></td><td><span class="editable" onclick="editStat('stayover',6)">0</span></td><td class="total-col">0</td></tr></tbody></table></div>
+  </div>
+
+  <div class="schedule-panel">
+    <div class="schedule-scroll">
+      <table class="schedule-table" id="schedule-table"><thead><tr><th class="name-col">Employee</th><th><div class="day-th"><span class="dow">Sun</span><span class="dt">14 Jun</span></div></th><th><div class="day-th"><span class="dow">Mon</span><span class="dt">15 Jun</span></div></th><th><div class="day-th"><span class="dow">Tue</span><span class="dt">16 Jun</span></div></th><th><div class="day-th"><span class="dow">Wed</span><span class="dt">17 Jun</span></div></th><th><div class="day-th"><span class="dow">Thu</span><span class="dt">18 Jun</span></div></th><th><div class="day-th"><span class="dow">Fri</span><span class="dt">19 Jun</span></div></th><th><div class="day-th"><span class="dow">Sat</span><span class="dt">20 Jun</span></div></th><th class="hrs-col">Hours</th></tr></thead><tbody><tr class="section-row"><td colspan="9">Front Desk Director</td></tr><tr>
+        <td><div class="emp-cell">
+          <span class="emp-name">Ethan</span>
+          <button class="del-btn" onclick="deleteEmployee(0,0)">✕</button>
+        </div></td><td class="shift-cell"><span class="pill p-am" onclick="editShift(0,0,0)">7AM-4PM</span></td><td class="shift-cell"><span class="pill p-am" onclick="editShift(0,0,1)">7AM-4PM</span></td><td class="shift-cell"><span class="pill p-off" onclick="editShift(0,0,2)">OFF</span></td><td class="shift-cell"><span class="pill p-am" onclick="editShift(0,0,3)">7AM -12PM</span></td><td class="shift-cell"><span class="pill p-am" onclick="editShift(0,0,4)">7AM-4PM</span></td><td class="shift-cell"><span class="pill p-am" onclick="editShift(0,0,5)">7AM-4PM</span></td><td class="shift-cell"><span class="pill p-am" onclick="editShift(0,0,6)">7AM-4PM</span></td><td class="hrs-cell">45h</td></tr><tr class="section-row"><td colspan="9">Front Desk Manager</td></tr><tr>
+        <td><div class="emp-cell">
+          <span class="emp-name">Hasan Aksu</span>
+          <button class="del-btn" onclick="deleteEmployee(1,0)">✕</button>
+        </div></td><td class="shift-cell"><span class="pill p-am" onclick="editShift(1,0,0)">7AM-1PM- 12AM-5AM</span></td><td class="shift-cell"><span class="pill p-off" onclick="editShift(1,0,1)">OFF</span></td><td class="shift-cell"><span class="pill p-am" onclick="editShift(1,0,2)">7AM-4PM</span></td><td class="shift-cell"><span class="pill p-am" onclick="editShift(1,0,3)">11AM-7PM</span></td><td class="shift-cell"><span class="pill p-vac" onclick="editShift(1,0,4)">VACATION</span></td><td class="shift-cell"><span class="pill p-vac" onclick="editShift(1,0,5)">VACATION</span></td><td class="shift-cell"><span class="pill p-vac" onclick="editShift(1,0,6)">VACATION</span></td><td class="hrs-cell">23h</td></tr><tr class="section-row"><td colspan="9">Front Desk Agent</td></tr><tr>
+        <td><div class="emp-cell">
+          <span class="emp-name">Joyce</span>
+          <button class="del-btn" onclick="deleteEmployee(2,0)">✕</button>
+        </div></td><td class="shift-cell"><span class="pill p-night" onclick="editShift(2,0,0)">11PM-7AM</span></td><td class="shift-cell"><span class="pill p-night" onclick="editShift(2,0,1)">11PM-7AM</span></td><td class="shift-cell"><span class="pill p-night" onclick="editShift(2,0,2)">11PM-7AM</span></td><td class="shift-cell"><span class="pill p-night" onclick="editShift(2,0,3)">11PM-7AM</span></td><td class="shift-cell"><span class="pill p-pm" onclick="editShift(2,0,4)">5PM-11PM</span></td><td class="shift-cell"><span class="pill p-pm" onclick="editShift(2,0,5)">5PM-11PM</span></td><td class="shift-cell"><span class="pill p-pm" onclick="editShift(2,0,6)">5PM-11PM</span></td><td class="hrs-cell">50h</td></tr><tr>
+        <td><div class="emp-cell">
+          <span class="emp-name">Salih</span>
+          <button class="del-btn" onclick="deleteEmployee(2,1)">✕</button>
+        </div></td><td class="shift-cell"><span class="pill p-off" onclick="editShift(2,1,0)">OFF</span></td><td class="shift-cell"><span class="pill p-pm" onclick="editShift(2,1,1)">3PM-11PM</span></td><td class="shift-cell"><span class="pill p-pm" onclick="editShift(2,1,2)">3PM-11PM</span></td><td class="shift-cell"><span class="pill p-pm" onclick="editShift(2,1,3)">3PM-11PM</span></td><td class="shift-cell"><span class="pill p-night" onclick="editShift(2,1,4)">11PM-7AM</span></td><td class="shift-cell"><span class="pill p-night" onclick="editShift(2,1,5)">11PM-7AM</span></td><td class="shift-cell"><span class="pill p-night" onclick="editShift(2,1,6)">11PM-7AM</span></td><td class="hrs-cell">48h</td></tr><tr>
+        <td><div class="emp-cell">
+          <span class="emp-name">Tram</span>
+          <button class="del-btn" onclick="deleteEmployee(2,2)">✕</button>
+        </div></td><td class="shift-cell"><span class="pill p-pm" onclick="editShift(2,2,0)">3PM-11PM</span></td><td class="shift-cell"><span class="pill p-mid" onclick="editShift(2,2,1)">12PM-8PM</span></td><td class="shift-cell"><span class="pill p-mid" onclick="editShift(2,2,2)">12PM-8PM</span></td><td class="shift-cell"><span class="pill p-off" onclick="editShift(2,2,3)">OFF</span></td><td class="shift-cell"><span class="pill p-pm" onclick="editShift(2,2,4)">3PM-11PM</span></td><td class="shift-cell"><span class="pill p-pm" onclick="editShift(2,2,5)">3PM-11PM</span></td><td class="shift-cell"><span class="pill p-pm" onclick="editShift(2,2,6)">3PM-11PM</span></td><td class="hrs-cell">48h</td></tr><tr class="section-row"><td colspan="9">Night Audit</td></tr></tbody></table>
+    </div>
+  </div>
+
+  <div class="note-bar">
+    <span>● No changes without management approval</span>
+    <span>● Time-off requests 2 weeks in advance via UKG Dimensions</span>
+    <span>● Shifts &gt;6 hrs require a 30-min meal break</span>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Joyce — Sat 20 Jun</div>
+    <div id="modal-body">
+    <div class="form-row"><label>Select shift</label><div class="shift-grid"><div class="shift-opt p-off" onclick="selectShiftOpt(this,'OFF')">OFF</div><div class="shift-opt p-vac" onclick="selectShiftOpt(this,'VACATION')">VACATION</div><div class="shift-opt p-am" onclick="selectShiftOpt(this,'7AM-3PM')">7AM-3PM</div><div class="shift-opt p-am" onclick="selectShiftOpt(this,'7AM-4PM')">7AM-4PM</div><div class="shift-opt p-mid" onclick="selectShiftOpt(this,'10AM-6PM')">10AM-6PM</div><div class="shift-opt p-mid" onclick="selectShiftOpt(this,'10AM-5PM')">10AM-5PM</div><div class="shift-opt p-pm" onclick="selectShiftOpt(this,'3PM-11PM')">3PM-11PM</div><div class="shift-opt p-night" onclick="selectShiftOpt(this,'11PM-7AM')">11PM-7AM</div><div class="shift-opt p-mid selected" id="custom-opt" onclick="selectShiftOpt(this,'__custom__')">Custom…</div></div></div>
+    <div class="form-row" id="custom-row" style="display: block;">
+      <label>Custom shift (e.g. 8AM-4PM)</label>
+      <input id="custom-inp" value="" placeholder="8AM-4PM">
+    </div></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-accent" id="modal-save" style="">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const TOTAL_ROOMS = 386;
+const SHIFT_PRESETS = [
+  { label: 'OFF', cls: 'p-off' },
+  { label: 'VACATION', cls: 'p-vac' },
+  { label: '7AM-3PM', cls: 'p-am' },
+  { label: '7AM-4PM', cls: 'p-am' },
+  { label: '10AM-6PM', cls: 'p-mid' },
+  { label: '10AM-5PM', cls: 'p-mid' },
+  { label: '3PM-11PM', cls: 'p-pm' },
+  { label: '11PM-7AM', cls: 'p-night' },
+];
+
+function pillClass(s) {
+  if (!s || s === 'OFF') return 'p-off';
+  if (s === 'VACATION') return 'p-vac';
+  const m = s.match(/^(\d+)(AM|PM)/i);
+  if (!m) return 'p-am';
+  let h = parseInt(m[1]);
+  const ampm = m[2].toUpperCase();
+  if (ampm === 'PM' && h !== 12) h += 12;
+  if (ampm === 'AM' && h === 12) h = 0;
+  if (h >= 23 || h < 7) return 'p-night';
+  if (h >= 7 && h < 12) return 'p-am';
+  if (h >= 12 && h < 15) return 'p-mid';
+  return 'p-pm';
+}
+
+function shiftHours(s) {
+  if (!s || s === 'OFF' || s === 'VACATION') return 0;
+  const m = s.match(/(\d+)(AM|PM)-(\d+)(AM|PM)/i);
+  if (!m) return 0;
+  let [, sh, sa, eh, ea] = m; sh = parseInt(sh); eh = parseInt(eh);
+  if (sa.toUpperCase() === 'PM' && sh !== 12) sh += 12;
+  if (ea.toUpperCase() === 'PM' && eh !== 12) eh += 12;
+  if (sa.toUpperCase() === 'AM' && sh === 12) sh = 0;
+  if (ea.toUpperCase() === 'AM' && eh === 12) eh = 0;
+  let d = eh - sh; if (d <= 0) d += 24; return d;
+}
+
+const BASE_DATE = new Date(2025, 3, 5);
+let currentWeekIdx = 0;
+
+const DEFAULT_WEEK = {
+  arrivals:   [21, 44, 81, 26, 112, 156, 46],
+  departures: [40, 14,  7, 54,  39, 141, 44],
+  stayover:   [27, 34, 71, 98,  85,  56, 46],
+  sections: [
+    { name: 'Front Desk Director', employees: [
+      { name: 'Sezai Eser', shifts: ['OFF','OFF','7AM-4PM','7AM-4PM','7AM-4PM','7AM-4PM','7AM-4PM'] }
+    ]},
+    { name: 'Front Desk Manager', employees: [
+      { name: 'Hasan Aksu', shifts: ['OFF','VACATION','VACATION','VACATION','VACATION','VACATION','OFF'] },
+      { name: 'Tosha', shifts: ['OFF','OFF','OFF','OFF','OFF','OFF','OFF'] }
+    ]},
+    { name: 'Front Desk Agent', employees: [
+      { name: 'Joyce',         shifts: ['7AM-3PM','7AM-3PM','3PM-11PM','OFF','3PM-11PM','7AM-3PM','OFF'] },
+      { name: 'Tram (trainee)',shifts: ['OFF','OFF','10AM-6PM','7AM-3PM','7AM-3PM','10AM-5PM','7AM-3PM'] },
+      { name: 'Salih',         shifts: ['3PM-11PM','3PM-11PM','OFF','3PM-11PM','3PM-11PM','3PM-11PM','3PM-11PM'] },
+      { name: 'Nix',           shifts: ['OFF','OFF','OFF','OFF','OFF','OFF','OFF'] }
+    ]},
+    { name: 'Night Audit', employees: [
+      { name: 'Amber',           shifts: ['OFF','11PM-7AM','OFF','11PM-7AM','OFF','OFF','OFF'] },
+      { name: 'Dedrick Chapman', shifts: ['11PM-7AM','OFF','11PM-7AM','OFF','11PM-7AM','11PM-7AM','11PM-7AM'] }
+    ]}
+  ]
+};
+
+let allWeeks = {};
+
+// Load: embedded textarea first, then localStorage, then default
+try {
+  const embedded = document.getElementById('embedded-data');
+  if (embedded && embedded.value && embedded.value.trim() !== 'null') {
+    allWeeks = JSON.parse(embedded.value);
+  }
+} catch(e) {}
+if (!Object.keys(allWeeks).length) {
+  try {
+    const saved = localStorage.getItem('fd_schedule_weeks');
+    if (saved) allWeeks = JSON.parse(saved);
+  } catch(e) {}
+}
+if (!allWeeks[0]) allWeeks[0] = JSON.parse(JSON.stringify(DEFAULT_WEEK));
+
+function saveAll() {
+  try { localStorage.setItem('fd_schedule_weeks', JSON.stringify(allWeeks)); } catch(e) {}
+}
+
+function saveToFile() {
+  const dataJson = JSON.stringify(allWeeks);
+  let h = document.documentElement.outerHTML;
+  const open = '<textarea id="embedded-data" style="display:none">';
+  const close = '<' + '/textarea>';
+  const re = new RegExp(open.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '[\\s\\S]*?' + close.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  h = h.replace(re, open + dataJson + close);
+  const blob = new Blob([h], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'front_desk_schedule.html';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function getWeekData() { return allWeeks[currentWeekIdx] || null; }
+
+function getWeekStart() {
+  let d = new Date(BASE_DATE);
+  d.setDate(d.getDate() + currentWeekIdx * 7);
+  return d;
+}
+function formatDateRange() {
+  let s = getWeekStart(), e = new Date(s);
+  e.setDate(s.getDate() + 6);
+  return `${s.getDate()} ${MONTHS[s.getMonth()]} – ${e.getDate()} ${MONTHS[e.getMonth()]} ${e.getFullYear()}`;
+}
+function getDayLabels() {
+  let s = getWeekStart();
+  return DAYS.map((d, i) => {
+    let dt = new Date(s); dt.setDate(s.getDate() + i);
+    return { dow: d, date: `${dt.getDate()} ${MONTHS[dt.getMonth()]}` };
+  });
+}
+
+function renderStats() {
+  const wd = getWeekData();
+  const days = getDayLabels();
+  document.getElementById('week-label').textContent = formatDateRange();
+  document.getElementById('header-sub').textContent =
+    `Week ${currentWeekIdx === 0 ? '(current)' : currentWeekIdx > 0 ? '+' + currentWeekIdx : currentWeekIdx}`;
+
+  if (!wd) {
+    document.getElementById('stats-table').innerHTML = '';
+    return;
+  }
+
+  const maxArr = Math.max(...wd.arrivals, 1);
+  const maxDep = Math.max(...wd.departures, 1);
+
+  let html = '<thead><tr><th class="rl"></th>';
+  days.forEach(d => {
+    html += `<th><div class="day-th"><span class="dow">${d.dow}</span><span class="dt">${d.date}</span></div></th>`;
+  });
+  html += '<th style="text-align:right;width:80px;font-size:10px;padding-right:12px">Total/Avg</th></tr></thead><tbody>';
+
+  html += '<tr><td class="rl">Occupancy <span class="auto-badge">AUTO</span></td>';
+  let occSum = 0;
+  for (let i = 0; i < 7; i++) {
+    const pct = Math.min(100, Math.round(((wd.arrivals[i] + wd.stayover[i]) / TOTAL_ROOMS) * 100));
+    occSum += pct;
+    const col = pct < 30 ? '#6b9fe4' : pct < 60 ? '#2d5be3' : '#1a3aad';
+    html += `<td><span class="occ-val" style="color:${col}">${pct}%</span></td>`;
+  }
+  html += `<td class="total-col">${Math.round(occSum / 7)}%</td></tr>`;
+
+  html += '<tr><td class="rl">Arrivals</td>';
+  wd.arrivals.forEach((v, i) => {
+    const h = Math.max(4, Math.round((v / maxArr) * 26));
+    html += `<td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:${h}px;background:#2d5be3"></div>
+      <span class="editable" onclick="editStat('arrivals',${i})">${v}</span>
+    </div></td>`;
+  });
+  html += `<td class="total-col">${wd.arrivals.reduce((a, b) => a + b, 0)}</td></tr>`;
+
+  html += '<tr><td class="rl">Departures</td>';
+  wd.departures.forEach((v, i) => {
+    const h = Math.max(4, Math.round((v / maxDep) * 26));
+    html += `<td class="bar-cell"><div class="bar-wrap">
+      <div class="bar-inner" style="height:${h}px;background:#d4820a"></div>
+      <span class="editable" onclick="editStat('departures',${i})">${v}</span>
+    </div></td>`;
+  });
+  html += `<td class="total-col">${wd.departures.reduce((a, b) => a + b, 0)}</td></tr>`;
+
+  html += '<tr><td class="rl">Stay over <span class="auto-badge">→ OCC</span></td>';
+  wd.stayover.forEach((v, i) => {
+    html += `<td><span class="editable" onclick="editStat('stayover',${i})">${v}</span></td>`;
+  });
+  html += `<td class="total-col">${wd.stayover.reduce((a, b) => a + b, 0)}</td></tr>`;
+
+  html += '</tbody>';
+  document.getElementById('stats-table').innerHTML = html;
+}
+
+function renderSchedule() {
+  const wd = getWeekData();
+  const days = getDayLabels();
+
+  if (!wd) {
+    document.getElementById('schedule-table').innerHTML = `
+      <tbody><tr><td colspan="9">
+        <div class="empty-week">
+          <div class="ew-icon">📅</div>
+          <div class="ew-title">No schedule for this week yet</div>
+          <div class="ew-sub">This week hasn't been set up. Create it from scratch or copy from the previous week.</div>
+          <div style="display:flex;gap:8px;justify-content:center">
+            <button class="btn" onclick="initWeekEmpty()">Start blank</button>
+            <button class="btn btn-accent" onclick="copyFromPrev()">Copy from previous week</button>
+          </div>
+        </div>
+      </td></tr></tbody>`;
+    return;
+  }
+
+  let html = '<thead><tr><th class="name-col">Employee</th>';
+  days.forEach(d => {
+    html += `<th><div class="day-th"><span class="dow">${d.dow}</span><span class="dt">${d.date}</span></div></th>`;
+  });
+  html += '<th class="hrs-col">Hours</th></tr></thead><tbody>';
+
+  wd.sections.forEach((sec, si) => {
+    html += `<tr class="section-row"><td colspan="9">${sec.name}</td></tr>`;
+    sec.employees.forEach((emp, ei) => {
+      const hrs = emp.shifts.reduce((a, s) => a + shiftHours(s), 0);
+      html += `<tr>
+        <td><div class="emp-cell">
+          <span class="emp-name">${emp.name}</span>
+          <button class="del-btn" onclick="deleteEmployee(${si},${ei})">✕</button>
+        </div></td>`;
+      emp.shifts.forEach((sh, di) => {
+        html += `<td class="shift-cell"><span class="pill ${pillClass(sh)}" onclick="editShift(${si},${ei},${di})">${sh || 'OFF'}</span></td>`;
+      });
+      html += `<td class="hrs-cell">${hrs > 0 ? hrs + 'h' : '—'}</td></tr>`;
+    });
+  });
+
+  html += '</tbody>';
+  document.getElementById('schedule-table').innerHTML = html;
+}
+
+function render() { renderStats(); renderSchedule(); }
+function changeWeek(d) { currentWeekIdx += d; if (currentWeekIdx < 0) currentWeekIdx = 0; render(); }
+
+function initWeekEmpty() {
+  allWeeks[currentWeekIdx] = {
+    arrivals:   [0,0,0,0,0,0,0],
+    departures: [0,0,0,0,0,0,0],
+    stayover:   [0,0,0,0,0,0,0],
+    sections: JSON.parse(JSON.stringify(DEFAULT_WEEK.sections)).map(s => ({
+      ...s, employees: s.employees.map(e => ({ ...e, shifts: Array(7).fill('OFF') }))
+    }))
+  };
+  saveAll(); render();
+}
+
+function copyFromPrev() {
+  const prev = allWeeks[currentWeekIdx - 1];
+  if (!prev) { alert('No previous week data found.'); return; }
+  allWeeks[currentWeekIdx] = JSON.parse(JSON.stringify(prev));
+  allWeeks[currentWeekIdx].arrivals   = [0,0,0,0,0,0,0];
+  allWeeks[currentWeekIdx].departures = [0,0,0,0,0,0,0];
+  allWeeks[currentWeekIdx].stayover   = [0,0,0,0,0,0,0];
+  saveAll(); render();
+}
+
+function editStat(field, dayIdx) {
+  const wd = getWeekData();
+  const days = getDayLabels();
+  const labels = { arrivals: 'Arrivals', departures: 'Departures', stayover: 'Stay over' };
+  document.getElementById('modal-title').textContent = `${labels[field]} — ${days[dayIdx].dow} ${days[dayIdx].date}`;
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-row">
+      <label>Number of guests</label>
+      <input type="number" id="stat-inp" min="0" value="${wd[field][dayIdx]}">
+    </div>`;
+  document.getElementById('modal-save').onclick = () => {
+    wd[field][dayIdx] = parseInt(document.getElementById('stat-inp').value) || 0;
+    saveAll(); closeModal(); render();
+  };
+  openModal('stat-inp');
+}
+
+function editShift(si, ei, di) {
+  const wd = getWeekData();
+  const emp = wd.sections[si].employees[ei];
+  const cur = emp.shifts[di];
+  const days = getDayLabels();
+  document.getElementById('modal-title').textContent = `${emp.name} — ${days[di].dow} ${days[di].date}`;
+
+  const isCustom = cur && !SHIFT_PRESETS.map(p => p.label).includes(cur);
+  let gridHTML = SHIFT_PRESETS.map(p =>
+    `<div class="shift-opt ${p.cls}${cur === p.label ? ' selected' : ''}" onclick="selectShiftOpt(this,'${p.label}')">${p.label}</div>`
+  ).join('');
+  gridHTML += `<div class="shift-opt p-mid${isCustom ? ' selected' : ''}" id="custom-opt" onclick="selectShiftOpt(this,'__custom__')">Custom…</div>`;
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-row"><label>Select shift</label><div class="shift-grid">${gridHTML}</div></div>
+    <div class="form-row" id="custom-row" style="display:${isCustom ? 'block' : 'none'}">
+      <label>Custom shift (e.g. 8AM-4PM)</label>
+      <input id="custom-inp" value="${isCustom ? cur : ''}" placeholder="8AM-4PM">
+    </div>`;
+
+  document.getElementById('modal-save').onclick = () => {
+    const selected = document.querySelector('.shift-opt.selected');
+    let val = selected ? selected.textContent : cur;
+    if (val === 'Custom…') {
+      val = (document.getElementById('custom-inp').value.trim().toUpperCase()) || 'OFF';
+    }
+    emp.shifts[di] = val;
+    saveAll(); closeModal(); render();
+  };
+  openModal();
+}
+
+window.selectShiftOpt = function(el, val) {
+  document.querySelectorAll('.shift-opt').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  const cr = document.getElementById('custom-row');
+  if (cr) cr.style.display = val === '__custom__' ? 'block' : 'none';
+};
+
+function deleteEmployee(si, ei) {
+  const wd = getWeekData();
+  const name = wd.sections[si].employees[ei].name;
+  document.getElementById('modal-title').textContent = 'Remove employee';
+  document.getElementById('modal-body').innerHTML = `
+    <p><strong>${name}</strong> will be removed from this week's schedule. Continue?</p>`;
+  const saveBtn = document.getElementById('modal-save');
+  saveBtn.textContent = 'Remove';
+  saveBtn.style.background = 'var(--danger)';
+  saveBtn.style.borderColor = 'var(--danger)';
+  saveBtn.onclick = () => {
+    wd.sections[si].employees.splice(ei, 1);
+    saveAll(); closeModal(); render();
+  };
+  openModal();
+}
+
+function addEmployee() {
+  const wd = getWeekData();
+  if (!wd) { alert('Set up this week first.'); return; }
+  const secs = wd.sections.map((s, i) => `<option value="${i}">${s.name}</option>`).join('');
+  document.getElementById('modal-title').textContent = 'Add employee';
+  document.getElementById('modal-body').innerHTML = `
+    <div class="form-row"><label>Full name</label><input id="new-name" placeholder="e.g. John Smith"></div>
+    <div class="form-row"><label>Department</label><select id="new-sec">${secs}</select></div>
+    <div class="form-row"><label>Default shift (all days)</label>
+      <select id="new-shift">${SHIFT_PRESETS.map(p => `<option>${p.label}</option>`).join('')}</select>
+    </div>`;
+  document.getElementById('modal-save').onclick = () => {
+    const name = document.getElementById('new-name').value.trim();
+    if (!name) return;
+    const sec = parseInt(document.getElementById('new-sec').value);
+    const sh = document.getElementById('new-shift').value;
+    wd.sections[sec].employees.push({ name, shifts: Array(7).fill(sh) });
+    saveAll(); closeModal(); render();
+  };
+  openModal('new-name');
+}
+
+function openModal(focusId) {
+  document.getElementById('overlay').classList.add('open');
+  const sb = document.getElementById('modal-save');
+  sb.textContent = 'Save';
+  sb.style.background = '';
+  sb.style.borderColor = '';
+  if (focusId) setTimeout(() => {
+    const el = document.getElementById(focusId);
+    if (el) { el.focus(); el.select && el.select(); }
+  }, 80);
+}
+function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+document.getElementById('overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+render();
+
+</script>
+
+
+<link rel="stylesheet" asset="eduser.css" href="chrome-extension://mjdbhokoopacimoekfgkcoogikbfgngb/assets/eduser.css"><link rel="stylesheet" asset="eduser.css" href="chrome-extension://mjdbhokoopacimoekfgkcoogikbfgngb/assets/eduser.css"><link rel="stylesheet" asset="eduser.css" href="chrome-extension://mjdbhokoopacimoekfgkcoogikbfgngb/assets/eduser.css"><link rel="stylesheet" asset="eduser.css" href="chrome-extension://mjdbhokoopacimoekfgkcoogikbfgngb/assets/eduser.css"><link rel="stylesheet" asset="eduser.css" href="chrome-extension://mjdbhokoopacimoekfgkcoogikbfgngb/assets/eduser.css"><link rel="stylesheet" asset="eduser.css" href="chrome-extension://mjdbhokoopacimoekfgkcoogikbfgngb/assets/eduser.css"><link rel="stylesheet" asset="eduser.css" href="chrome-extension://mjdbhokoopacimoekfgkcoogikbfgngb/assets/eduser.css"><link rel="stylesheet" asset="eduser.css" href="chrome-extension://mjdbhokoopacimoekfgkcoogikbfgngb/assets/eduser.css"></body></html>
